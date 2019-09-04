@@ -11,3 +11,4 @@ a[1,1] = 1
 print(a)
 b = torch.Tensor(a)
 print(b.dtype)
+print(1)
