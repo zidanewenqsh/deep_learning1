@@ -105,10 +105,8 @@ class Detector():
 
         #  计算建议框大小
         _side = side_len // scale
-        # _w = _x2 - _x1
-        # _h = _y2 - _y1
+
         # 计算实际框四个坐标
-        # x1 = _x1 - offset[:,index[0],index[1]] * side_len // scale
 
         x1 = _x1 + _offset[:, 0] * _side
         y1 = _y1 + _offset[:, 1] * _side
@@ -129,7 +127,7 @@ class Detector():
         scale = 1.0  # 图像金字塔的缩放比例
         img = image
         while min_side_len > 12:  # 最小边大于12时做图像金字塔
-            # while i > 12:
+
             # 定义一个列表，放每一次缩放的框，用于单张特征图的nms
             # 进网前数据处理
 
@@ -216,13 +214,7 @@ class Detector():
         img = image
         _img_dataset = []
         _rnet_boxes = detectutils.to_square(rnet_boxes, img)
-        # for i,box in enumerate(_rnet_boxes):
-        #     print("boxnumpy",box.numpy())
-        #     image = image.crop(box.numpy()).resize((48,48))
-        #     print(image.size)
-        #     image.show()
-        #     if i>3:
-        #         break
+
         for i, _box in enumerate(_rnet_boxes):
             if _box[2] - _box[0] > 200:
                 img1 = img.crop(_box.numpy())
@@ -238,13 +230,9 @@ class Detector():
 
         _cls = _cls.detach().cpu()
         _offset = _offset.detach().cpu()
-        # print("cls",_cls.size())
-        # print((_cls))
+
         cls_mask = torch.gt(_cls, clsthrehold).view(-1)
-        # print(111111111111111,cls_mask.size(),torch.any(cls_mask))
-        # print("cls_mase",torch.any(cls_mask))
-        # print(cls_mask)
-        # print(torch.sum(cls_mask))
+
         if torch.any(cls_mask):
             cls = _cls[cls_mask]
             # print("cls",cls)
@@ -261,57 +249,12 @@ class Detector():
             y1 = _y1 + offset[:, 1] * _side
             x2 = _x2 + offset[:, 2] * _side
             y2 = _y2 + offset[:, 3] * _side
-            # print(x1.size(), y1.size(), x2.size(), y2.size(), cls.size())
-            # print(torch.stack((x1, y1, x2, y2, cls.view(-1)), dim=1))
+
             boxes = torch.stack((x1, y1, x2, y2, cls.view(-1)), dim=1)
             torch.round_(boxes[:, :4])
-            # print("oboxes", boxes.size(), utils.nms(boxes, nmsthrehold).size())
+
             rboxes = utils.nms(boxes, nmsthrehold, isMin=True)
             return rboxes
         return torch.Tensor([])
 
 
-# def imgdraw1():
-#     img_dir = r"../images"
-#     for file in os.listdir(img_file):
-#         img_file = os.path.join()
-
-
-if __name__ == '__main__':
-    np.set_printoptions(threshold=np.inf, suppress=False)
-    torch.set_printoptions(threshold=np.inf, sci_mode=False)
-    # img_file0 = r"../test/people.jpg"
-    # # img_file = r"E:\mtcnndataset\datasets\jpg\000020.jpg"
-    # #缩放了
-    # detecter = Detector()
-    # img0 = Image.open(img_file0)
-    # w,h = img0.size
-    # img = img0.resize((w//5,h//5))
-    # print(img.size)
-    # draw = ImageDraw.Draw(img0)
-    # boxes = detecter.detect(img)
-    # boxes1 = boxes[:,:4]*5
-    # print(boxes1)
-    # for box in boxes1:
-    #     draw.rectangle(box,outline='red',width=2)
-    # # img0.show()
-
-    # img_file = r"../test/people01.jpg"
-    img_file = r"../pic/010.jpg"
-    detecter = Detector(returnnet="Onet")
-    img = Image.open(img_file)
-    boxes = detecter.detect(img)
-    print("boxes", boxes)
-    draw = ImageDraw.Draw(img)
-    for box in boxes:
-        print(box.dtype, type(box))
-        draw.rectangle(box, outline="red", width=1)
-    img.show()
-    # print(123)
-    # label = [155,  104,  265,  272,0 ]
-    # diff = boxes-label
-    # print(diff)
-    # # print(diff<10)
-    # for i,value in enumerate(diff<10):
-    #     print(i)
-    #     print(value)
