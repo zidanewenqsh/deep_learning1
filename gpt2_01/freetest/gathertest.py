@@ -1,0 +1,18 @@
+import torch
+#RuntimeError: invalid argument 4: Index tensor must have same dimensions as input tensor
+a = torch.arange(8).reshape(2,2,2)
+b = torch.gather(a, 0, torch.tensor([[[0,0],[1,0]]]))
+c = torch.gather(a, 1, torch.tensor([[[1,0]],[[0,0]]]))
+d = torch.gather(a, 2, torch.tensor([[[0,0,1],[1,0,1]],[[0,1,0],[1,0,0]]]))
+print(a.shape,b.shape,c.shape,d.shape)
+print(b)
+print()
+print(c)
+print()
+print(d)
+# b = torch.Tensor([[1,2,3],[4,5,6]])
+# print (b)
+# index_1 = torch.LongTensor([[0,1,1,1],[2,1,2,0]])
+# index_2 = torch.LongTensor([[0,1,1],[0,0,0]])
+# print (torch.gather(b, dim=1, index=index_1))
+# print (torch.gather(b, dim=0, index=index_2))
